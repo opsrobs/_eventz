@@ -48,7 +48,7 @@ namespace eventz.Controllers
             }
             else
             {
-                return BadRequest("CPF/CNPJ já está cadastrado");
+                return BadRequest("CPF/ CNPJ já está cadastrado");
             }
         }
 
