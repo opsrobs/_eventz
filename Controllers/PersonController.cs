@@ -43,7 +43,7 @@ namespace eventz.Controllers
             }
             else
             {
-                return BadRequest("Usernamenão disponivel");
+                return BadRequest("Username não disponivel!");
             }
         }
     }
