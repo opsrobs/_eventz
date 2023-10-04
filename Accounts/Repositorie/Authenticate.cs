@@ -20,7 +20,7 @@ namespace eventz.Accounts.Repositorie
 
         public async Task<bool> AuthenticateAsync(string username, string password)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _dbContext.Person.FirstOrDefaultAsync(x => x.Username == username);
             if (user == null) return false;
 
             if (BCrypt.Net.BCrypt.Verify(user.Password, password)) return false;
@@ -56,7 +56,7 @@ namespace eventz.Accounts.Repositorie
 
         public async Task<bool> UserExists(string username)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _dbContext.Person.FirstOrDefaultAsync(x => x.Username == username);
             if (user == null) return false;
 
             return true;

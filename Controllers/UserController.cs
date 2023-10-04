@@ -15,71 +15,77 @@ namespace eventz.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepositorie _repositorie;
+        private readonly IPersonRepositorie _personRepositorie;
         private readonly IAuthenticate _authenticate;
         private readonly ISecurityService _securityService;
         private readonly IMapper _mapper;
 
 
 
-        public UserController(IUserRepositorie repositorie, IMapper mapper, IAuthenticate authenticate, ISecurityService securityService)
+        public UserController(IUserRepositorie repositorie, IPersonRepositorie personRepositorie, IMapper mapper, IAuthenticate authenticate, ISecurityService securityService)
         {
             _repositorie = repositorie;
+            _personRepositorie = personRepositorie;
             _mapper = mapper;
             _authenticate = authenticate;
             _securityService = securityService;
         }
 
+
+
         [HttpPost]
         [Route("Register")]
-        public async Task<ActionResult<UserDto>> Create([FromBody] UserModel userModel)
+        public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserRequestDto userRequest)
         {
-            if (await _repositorie.DataIsUnique(userModel))
+            if (!await _repositorie.DataIsUnique(userRequest.CPF))
             {
-                userModel.Id = Guid.NewGuid();
-                string encrypted = await _securityService.EncryptPassword(userModel.Password);
-                userModel.Password = encrypted;
-
-                UserModel user = await _repositorie.Create(userModel);
-
-                var userDto = _mapper.Map<UserDto>(user);
-                var token = _authenticate.GenerateToken(user.Id, user.Email);
-
-                return Ok(new { User = userDto, Token = token });
+                return BadRequest("CPF já está cadastrado!");
             }
-            else
-            {
-                return BadRequest("CPF/ CNPJ já está cadastrado");
-            }
+
+            userRequest.PersonID.Id = Guid.NewGuid();
+            userRequest.PersonID.Password = await _securityService.EncryptPassword(userRequest.PersonID.Password);
+            userRequest.PersonID.Roles = Enums.RolesEnum.User;
+
+            UserModel userModel = _mapper.Map<UserModel>(userRequest);
+            userModel = await _repositorie.Create(userModel);
+
+            var userDto = _mapper.Map<UserDto>(userModel);
+            var token = _authenticate.GenerateToken(userModel.PersonID.Id, userModel.PersonID.Email);
+
+            return Ok(new { User = userDto, Token = token });
         }
+
 
 
         [HttpPost]
         [Route("Login")]
         public async Task<ActionResult<dynamic>> Authenticate([FromBody] UserModel user)
         {
-            var userLoggin = await _authenticate.AuthenticateAsync(user.Username, user.Password);
+            var userLoggin = await _authenticate.AuthenticateAsync(user.PersonID.Username, user.PersonID.Password);
             if (userLoggin == false )
             {
                 return NotFound("Usuario ou senha inválidos!");
             }
-            var token = _authenticate.GenerateToken(user.Id, user.Email);
+            var token = _authenticate.GenerateToken(user.PersonID.Id, user.PersonID.Email);
 
             return token;
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserModel>> Update([FromBody] UserModel userModel, Guid id)
+        public async Task<ActionResult<UserDto>> Update([FromBody] UserToDtoUpdate userModel, Guid id)
         {
-            userModel.Id = id;  
-            if (await _repositorie.DataIsUnique(userModel))
+            //userModel.PersonID.Id= id;  
+            if (await _repositorie.DataIsUnique(userModel.CPF))
             {
-                UserModel user = await _repositorie.Update(userModel, id);
+                var isUpdated = _mapper.Map<UserModel>(userModel);
+                isUpdated.Id = id;
+                UserModel user = await _repositorie.Update(isUpdated, id);
                 var userDto = _mapper.Map<UserDto>(user);
                 return Ok(userDto);
 
             }
             else
-                return BadRequest("CPF/CNPJ já está cadastro");
+                return BadRequest("CPF já está cadastro");
 
         }
 

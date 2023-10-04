@@ -17,7 +17,7 @@ namespace eventz.Models
         public PersonModel()
         {
             Id = Guid.NewGuid();
-            Roles = RolesEnum.User;
+            CreatedAt = DateTime.Now;
         }
 
         public PersonModel(Guid id, string firstName, string lastName, string email, DateTime createdAt, DateTime updatedAt, string username, string password, RolesEnum roles)
@@ -26,7 +26,7 @@ namespace eventz.Models
             FirstName = firstName;
             LastName = lastName;
             Email = email;
-            CreatedAt = createdAt;
+            CreatedAt = DateTime.Now;
             UpdatedAt = updatedAt;
             Username = username;
             Password = password;

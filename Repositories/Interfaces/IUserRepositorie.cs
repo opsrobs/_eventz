@@ -9,7 +9,7 @@ namespace eventz.Repositories.Interfaces
         Task<UserModel> Create(UserModel user);
         Task<UserModel> Update(UserModel user, Guid id);
         Task<bool> Delete(Guid id);
-        Task<bool> DataIsUnique(UserModel user);
+        Task<bool> DataIsUnique(string cpf);
 
 
     }
