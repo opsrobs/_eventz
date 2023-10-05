@@ -1,5 +1,4 @@
-﻿using BCrypt.Net;
-using eventz.SecurityServices.Interfaces;
+﻿using eventz.SecurityServices.Interfaces;
 
 namespace eventz.SecurityServices
 {
@@ -15,7 +14,7 @@ namespace eventz.SecurityServices
             catch (Exception ex)
             {
                 Console.WriteLine($"Ocorreu uma exceção: {ex.Message}");
-                return null; 
+                return null;
             }
 
         }

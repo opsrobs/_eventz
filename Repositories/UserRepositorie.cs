@@ -2,11 +2,6 @@
 using eventz.Models;
 using eventz.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace eventz.Repositories
 {
@@ -14,7 +9,7 @@ namespace eventz.Repositories
     {
         private readonly EventzDbContext _dbContext;
         private readonly IConfiguration _configuration;
-        public UserRepositorie(EventzDbContext userDbContext, IConfiguration configuration) 
+        public UserRepositorie(EventzDbContext userDbContext, IConfiguration configuration)
         {
             _dbContext = userDbContext;
             _configuration = configuration;
@@ -53,7 +48,7 @@ namespace eventz.Repositories
                 throw new InvalidOperationException("User not found");
             }
 
-            
+
             _dbContext.Users.Remove(userId);
             await _dbContext.SaveChangesAsync();
 
@@ -63,9 +58,9 @@ namespace eventz.Repositories
 
         public async Task<UserModel> Update(UserModel user, Guid id)
         {
-            UserModel userId =  await GetUserById(id);
+            UserModel userId = await GetUserById(id);
 
-            if(userId == null) 
+            if (userId == null)
             {
                 throw new InvalidOperationException("User not found");
             }
@@ -84,8 +79,8 @@ namespace eventz.Repositories
             return userId;
         }
 
-       
 
-      
+
+
     }
 }

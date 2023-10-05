@@ -1,4 +1,6 @@
-﻿using eventz.Models;
+﻿using eventz.Accounts;
+using eventz.DTOs;
+using eventz.Models;
 using eventz.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +10,12 @@ namespace eventz.Repositories
     {
         private readonly Data.EventzDbContext _dbContext;
         private readonly IConfiguration _configuration;
-        public PersonRepositorie(Data.EventzDbContext eventzDbContext, IConfiguration configuration)
+        private readonly IAuthenticate _authenticate;
+        public PersonRepositorie(Data.EventzDbContext eventzDbContext, IConfiguration configuration, IAuthenticate authenticate)
         {
             _dbContext = eventzDbContext;
             _configuration = configuration;
+            _authenticate = authenticate;
         }
         public async Task<PersonModel> Create(PersonModel person)
         {
@@ -44,6 +48,11 @@ namespace eventz.Repositories
 
             return personID;
         }
+        public async Task<PersonModel> GetDataFromLogin(PersonToDtoLogin loginDetails)
+        {
+            return _dbContext.Person.FirstOrDefault(x => x.Username == loginDetails.Username);
+        }
+
 
         public async Task<bool> UsernameIsUnique(PersonModel person)
         {

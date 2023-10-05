@@ -10,6 +10,6 @@ namespace eventz.DTOs
 
         public CreateUserRequestDto() { }
 
-        
+
     }
 }

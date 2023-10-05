@@ -1,5 +1,4 @@
 ﻿using eventz.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -23,10 +22,11 @@ namespace eventz.Accounts.Repositorie
             var user = await _dbContext.Person.FirstOrDefaultAsync(x => x.Username == username);
             if (user == null) return false;
 
-            if (BCrypt.Net.BCrypt.Verify(user.Password, password)) return false;
+            if (!BCrypt.Net.BCrypt.Verify(password, user.Password)) return false;
 
             return true;
         }
+
 
         public string GenerateToken(Guid id, string email)
         {
@@ -52,6 +52,46 @@ namespace eventz.Accounts.Repositorie
                 expires: expiration,
                 signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        public string GenerateToken(IEnumerable<Claim> claims)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = new SymmetricSecurityKey(Encoding.UTF8
+            .GetBytes(_configuration["jwt:SecretKey"]));
+
+            var credentials = new SigningCredentials
+                (key, SecurityAlgorithms.HmacSha256);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = credentials
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        public ClaimsPrincipal GetTokenData(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                    .GetBytes(_configuration["jwt:SecretKey"])),
+                ValidateLifetime = true
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+                StringComparison.InvariantCultureIgnoreCase))
+                throw new InvalidOperationException("Invalid Token!");
+
+
+            return principal;
         }
 
         public async Task<bool> UserExists(string username)

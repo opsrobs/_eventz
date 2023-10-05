@@ -4,7 +4,7 @@ using eventz.Models;
 
 namespace eventz.Mappings
 {
-    public class MappingUserToUpdate: Profile
+    public class MappingUserToUpdate : Profile
     {
         public MappingUserToUpdate()
         {

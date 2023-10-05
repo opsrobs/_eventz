@@ -7,7 +7,7 @@ namespace eventz.Data
     public class EventzDbContext : DbContext
     {
         public EventzDbContext(DbContextOptions<EventzDbContext> options)
-            : base(options) 
+            : base(options)
         {
         }
 

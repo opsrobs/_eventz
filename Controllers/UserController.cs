@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using eventz.Accounts;
 using eventz.DTOs;
-using eventz.Mappings;
 using eventz.Models;
 using eventz.Repositories.Interfaces;
 using eventz.SecurityServices.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eventz.Controllers
@@ -57,19 +55,19 @@ namespace eventz.Controllers
 
 
 
-        [HttpPost]
-        [Route("Login")]
-        public async Task<ActionResult<dynamic>> Authenticate([FromBody] UserModel user)
-        {
-            var userLoggin = await _authenticate.AuthenticateAsync(user.PersonID.Username, user.PersonID.Password);
-            if (userLoggin == false )
-            {
-                return NotFound("Usuario ou senha inválidos!");
-            }
-            var token = _authenticate.GenerateToken(user.PersonID.Id, user.PersonID.Email);
+        //[HttpPost]
+        //[Route("Login")]
+        //public async Task<ActionResult<dynamic>> Authenticate([FromBody] UserModel user)
+        //{
+        //    var userLoggin = await _authenticate.AuthenticateAsync(user.PersonID.Username, user.PersonID.Password);
+        //    if (userLoggin == false )
+        //    {
+        //        return NotFound("Usuario ou senha inválidos!");
+        //    }
+        //    var token = _authenticate.GenerateToken(user.PersonID.Id, user.PersonID.Email);
 
-            return token;
-        }
+        //    return token;
+        //}
 
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Update([FromBody] UserToDtoUpdate userModel, Guid id)
@@ -90,7 +88,7 @@ namespace eventz.Controllers
         }
 
         [HttpGet]
-        public async Task <ActionResult<List<UserModel>>> GetAllUsers()
+        public async Task<ActionResult<List<UserModel>>> GetAllUsers()
         {
             List<UserModel> users = await _repositorie.GetAllUsers();
             return Ok(users);
@@ -109,6 +107,6 @@ namespace eventz.Controllers
         {
             bool deleted = await _repositorie.Delete(id);
             return Ok(deleted);
+        }
     }
-}
 }

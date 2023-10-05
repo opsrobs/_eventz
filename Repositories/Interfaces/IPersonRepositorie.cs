@@ -1,4 +1,5 @@
-﻿using eventz.Models;
+﻿using eventz.DTOs;
+using eventz.Models;
 
 namespace eventz.Repositories.Interfaces
 {
@@ -8,5 +9,6 @@ namespace eventz.Repositories.Interfaces
         Task<PersonModel> Create(PersonModel person);
         Task<PersonModel> Update(PersonModel person, Guid id);
         Task<bool> UsernameIsUnique(PersonModel person);
+        Task<PersonModel> GetDataFromLogin(PersonToDtoLogin person);
     }
 }

@@ -46,5 +46,23 @@ namespace eventz.Controllers
                 return BadRequest("Username não disponivel!");
             }
         }
+
+
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<ActionResult<PersonDto>> Authenticate([FromBody] PersonToDtoLogin login)
+        {
+            var userLoggin = await _authenticate.AuthenticateAsync(login.Username, login.Password);
+            if (userLoggin == false)
+            {
+                return NotFound("Usuario ou senha inválidos!");
+            }
+            PersonModel person = await _repositorie.GetDataFromLogin(login);
+            var token = _authenticate.GenerateToken(person.Id, person.Email);
+            var personDto = _mapper.Map<PersonDto>(person);
+
+            return Ok(new { User = personDto, Token = token });
+        }
     }
 }

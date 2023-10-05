@@ -3,7 +3,7 @@
     public class UserToken
     {
         public Guid Id { get; set; }
-        public int UserId { get; set; }
+        public int Username { get; set; }
         public string Token { get; set; }
         public DateTime ExpiryDate { get; set; }
 
@@ -12,10 +12,10 @@
             Id = Guid.NewGuid();
         }
 
-        public UserToken(Guid id, int userId, string token, DateTime expiryDate)
+        public UserToken(Guid id, int username, string token, DateTime expiryDate)
         {
             Id = id;
-            UserId = userId;
+            Username = username;
             Token = token;
             ExpiryDate = expiryDate;
         }

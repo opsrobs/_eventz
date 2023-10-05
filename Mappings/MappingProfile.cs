@@ -9,7 +9,7 @@ namespace eventz.Mappings
         public MappingProfile()
         {
             CreateMap<CreateUserRequestDto, UserModel>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore()) 
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
             .ForMember(dest => dest.CPF, opt => opt.MapFrom(src => src.CPF))
             .ForMember(dest => dest.PersonID, opt => opt.MapFrom(src => src.PersonID));

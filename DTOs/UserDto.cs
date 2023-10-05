@@ -1,6 +1,4 @@
-﻿using eventz.Enums;
-
-namespace eventz.DTOs
+﻿namespace eventz.DTOs
 {
     public class UserDto
     {

@@ -1,6 +1,5 @@
 using eventz.Accounts;
 using eventz.Accounts.Repositorie;
-using eventz.Controllers;
 using eventz.Data;
 using eventz.Mappings;
 using eventz.Repositories;
@@ -76,6 +75,7 @@ if (app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
