@@ -12,7 +12,6 @@ namespace eventz.Data.Map
             builder.Property(x => x.Username);
             builder.Property(x => x.Token).IsRequired();
             builder.Property(x => x.RefreshToken).IsRequired();
-            builder.Property(x => x.ExpiryDate);
         }
     }
 }

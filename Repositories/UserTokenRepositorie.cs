@@ -21,14 +21,30 @@ namespace eventz.Repositories
             return userToken;
         }
 
-        public Task<bool> DeleteToken(Guid id)
+        public async Task<bool> DeleteToken(Guid id)
         {
-            throw new NotImplementedException();
+            UserToken userToken = await GetToken(id);
+
+            if (userToken == null)
+            {
+                throw new InvalidOperationException("Token not found");
+            }
+
+
+            _dbContext.Token.Remove(userToken);
+            await _dbContext.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<UserToken> GetToken(Guid id)
         {
             return await _dbContext.Token.FirstOrDefaultAsync(x => x.Id == id);
+        }
+        
+            public async Task<UserToken> GetTokenByRefresh(string refresh)
+        {
+            return await _dbContext.Token.FirstOrDefaultAsync(x => x.RefreshToken == refresh);
         }
     }
 }

@@ -54,9 +54,9 @@ namespace eventz.Repositories
         }
 
 
-        public async Task<bool> UsernameIsUnique(PersonModel person)
+        public async Task<bool> UsernameIsUnique(string username)
         {
-            if (!await _dbContext.Person.AnyAsync(x => x.Username == person.Username))
+            if (!await _dbContext.Person.AnyAsync(x => x.Username == username))
             {
                 return true;
             }

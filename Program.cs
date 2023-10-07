@@ -30,6 +30,8 @@ builder.Services.AddScoped<IUserRepositorie, UserRepositorie>();
 builder.Services.AddScoped<IPersonRepositorie, PersonRepositorie>();
 builder.Services.AddScoped<IAuthenticate, Authenticate>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
+builder.Services.AddScoped<IUserTokenRepositorie, UserTokenRepositorie>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

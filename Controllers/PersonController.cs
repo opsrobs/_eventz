@@ -28,7 +28,7 @@ namespace eventz.Controllers
         [HttpPost]
         public async Task<ActionResult<PersonDto>> Create([FromBody] PersonModel personModel)
         {
-            if (await _repositorie.UsernameIsUnique(personModel))
+            if (await _repositorie.UsernameIsUnique(personModel.Username))
             {
                 personModel.Id = Guid.NewGuid();
                 string encrypted = await _securityService.EncryptPassword(personModel.Password);

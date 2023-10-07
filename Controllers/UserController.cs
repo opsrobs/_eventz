@@ -14,19 +14,21 @@ namespace eventz.Controllers
     {
         private readonly IUserRepositorie _repositorie;
         private readonly IPersonRepositorie _personRepositorie;
+        private readonly IUserTokenRepositorie _userTokenRepositorie;
         private readonly IAuthenticate _authenticate;
         private readonly ISecurityService _securityService;
         private readonly IMapper _mapper;
 
 
 
-        public UserController(IUserRepositorie repositorie, IPersonRepositorie personRepositorie, IMapper mapper, IAuthenticate authenticate, ISecurityService securityService)
+        public UserController(IUserRepositorie repositorie, IPersonRepositorie personRepositorie, IMapper mapper, IAuthenticate authenticate, ISecurityService securityService, IUserTokenRepositorie userTokenRepositorie)
         {
             _repositorie = repositorie;
             _personRepositorie = personRepositorie;
             _mapper = mapper;
             _authenticate = authenticate;
             _securityService = securityService;
+            _userTokenRepositorie = userTokenRepositorie;       
         }
 
 
@@ -39,6 +41,10 @@ namespace eventz.Controllers
             {
                 return BadRequest("CPF já está cadastrado!");
             }
+            if(!await _personRepositorie.UsernameIsUnique(userRequest.Person.Username))
+            {
+                return BadRequest("Username não está disponivel!");
+            }
 
             userRequest.Person.Id = Guid.NewGuid();
             userRequest.Person.Password = await _securityService.EncryptPassword(userRequest.Person.Password);
@@ -48,28 +54,26 @@ namespace eventz.Controllers
             userModel.PersonId = userRequest.Person.Id;
             userModel = await _repositorie.Create(userModel);
 
-            var userDto = _mapper.Map<UserDto>(userModel);
             var token = _authenticate.GenerateToken(userModel.Person.Id, userModel.Person.Email);
+            UserToken userToken = new UserToken
+            {
+                Token = token,
+                RefreshToken = Guid.NewGuid().ToString(),
+                Username = userRequest.Person.Username
+            };
+            var refreshToken = await _userTokenRepositorie.CreateToken(userToken);
 
-            return Ok(new { User = userDto, Token = token });
+            var userDto = _mapper.Map<UserDto>(userModel);
+            return Ok(new { User = userDto, Token = refreshToken });
         }
 
-
-
-        //[HttpPost]
-        //[Route("Login")]
-        //public async Task<ActionResult<dynamic>> Authenticate([FromBody] UserModel user)
-        //{
-        //    var userLoggin = await _authenticate.AuthenticateAsync(user.Person.Username, user.Person.Password);
-        //    if (userLoggin == false )
-        //    {
-        //        return NotFound("Usuario ou senha inválidos!");
-        //    }
-        //    var token = _authenticate.GenerateToken(user.Person.Id, user.Person.Email);
-
-        //    return token;
-        //}
-
+        [HttpPost]
+        [Route("Refresh")]
+        public async Task<UserToken> RefreshToken(string refreshToken)
+        {
+            UserToken token = await _userTokenRepositorie.GetTokenByRefresh(refreshToken);
+            return await _authenticate.RefreshToken(token);
+        }
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Update([FromBody] UserToDtoUpdate userModel, Guid id)
         {

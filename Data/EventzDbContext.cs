@@ -20,6 +20,7 @@ namespace eventz.Data
         {
             modelBuilder.ApplyConfiguration(new UserMap());
             modelBuilder.ApplyConfiguration(new PersonMap());
+            modelBuilder.ApplyConfiguration(new UserTokenMap());
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using eventz.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace eventz.Accounts
 {
@@ -10,5 +12,6 @@ namespace eventz.Accounts
         public string GenerateToken(IEnumerable<Claim> claims);
 
         public ClaimsPrincipal GetTokenData(string token);
+        public Task<UserToken> RefreshToken(UserToken userToken);
     }
 }

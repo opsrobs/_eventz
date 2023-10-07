@@ -1,4 +1,6 @@
 ﻿using eventz.Data;
+using eventz.Models;
+using eventz.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,10 +13,12 @@ namespace eventz.Accounts.Repositorie
     {
         private readonly EventzDbContext _dbContext;
         private readonly IConfiguration _configuration;
-        public Authenticate(EventzDbContext userDbContext, IConfiguration configuration)
+        private readonly IUserTokenRepositorie _userTokenRepositorie;
+        public Authenticate(EventzDbContext userDbContext, IConfiguration configuration, IUserTokenRepositorie userTokenRepositorie)
         {
             _dbContext = userDbContext;
             _configuration = configuration;
+            _userTokenRepositorie = userTokenRepositorie;
         }
 
         public async Task<bool> AuthenticateAsync(string username, string password)
@@ -25,6 +29,38 @@ namespace eventz.Accounts.Repositorie
             if (!BCrypt.Net.BCrypt.Verify(password, user.Password)) return false;
 
             return true;
+        }
+
+        public async Task<UserToken> RefreshToken(UserToken userToken)
+        {
+            if (userToken == null || string.IsNullOrEmpty(userToken.Token))
+            {
+                throw new ArgumentNullException(nameof(userToken), "UserToken or its Token property cannot be null or empty.");
+            }
+
+            var principal = GetTokenData(userToken.Token);
+            if (principal == null || !principal.Identity.IsAuthenticated)
+            {
+                throw new SecurityTokenException("Invalid token!");
+            }
+
+            var savedRefreshToken = await _userTokenRepositorie.GetToken(userToken.Id);
+            if (savedRefreshToken == null || savedRefreshToken.RefreshToken != userToken.RefreshToken)
+            {
+                throw new SecurityTokenException("Invalid refresh token!");
+            }
+
+            var newJwtToken = GenerateToken(principal.Claims);
+            var newRefreshJwt = Guid.NewGuid().ToString();
+
+            await _userTokenRepositorie.DeleteToken(userToken.Id);
+            var newToken = new UserToken
+            {
+                Token = newJwtToken,
+                RefreshToken = newRefreshJwt,
+                Username = userToken.Username
+            };
+            return await _userTokenRepositorie.CreateToken(newToken);
         }
 
 
@@ -75,8 +111,8 @@ namespace eventz.Accounts.Repositorie
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = true,
-                ValidateIssuer = true,
+                ValidateAudience = false,
+                ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
                     .GetBytes(_configuration["jwt:SecretKey"])),
