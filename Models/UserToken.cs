@@ -5,6 +5,7 @@
         public Guid Id { get; set; }
         public int Username { get; set; }
         public string Token { get; set; }
+        public string RefreshToken { get; set; }
         public DateTime ExpiryDate { get; set; }
 
         public UserToken()

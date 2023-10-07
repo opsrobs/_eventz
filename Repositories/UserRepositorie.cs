@@ -17,7 +17,7 @@ namespace eventz.Repositories
 
         public async Task<List<UserModel>> GetAllUsers()
         {
-            return await _dbContext.Users.ToListAsync();
+            return await _dbContext.Users.Where(x => x.Person.Id == x.PersonId).Include(u => u.Person).ToListAsync();
         }
         public async Task<bool> DataIsUnique(string cpf)
         {
@@ -29,8 +29,16 @@ namespace eventz.Repositories
         }
         public async Task<UserModel> GetUserById(Guid id)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (user != null)
+            {
+                await _dbContext.Entry(user).Reference(u => u.Person).LoadAsync();
+            }
+
+            return user;
         }
+
 
         public async Task<UserModel> Create(UserModel user)
         {
@@ -67,11 +75,11 @@ namespace eventz.Repositories
 
             userId.CPF = user.CPF;
             userId.DateOfBirth = user.DateOfBirth;
-            userId.PersonID.FirstName = user.PersonID.FirstName;
-            userId.PersonID.LastName = user.PersonID.LastName;
-            userId.PersonID.Email = user.PersonID.Email;
-            userId.PersonID.Username = user.PersonID.Username;
-            userId.PersonID.UpdatedAt = DateTime.Now;
+            userId.Person.FirstName = user.Person.FirstName;
+            userId.Person.LastName = user.Person.LastName;
+            userId.Person.Email = user.Person.Email;
+            userId.Person.Username = user.Person.Username;
+            userId.Person.UpdatedAt = DateTime.Now;
 
             _dbContext.Users.Update(userId);
             await _dbContext.SaveChangesAsync();

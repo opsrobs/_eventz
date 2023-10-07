@@ -4,7 +4,7 @@ namespace eventz.DTOs
 {
     public record CreateUserRequestDto
     {
-        public PersonModel PersonID { get; init; }
+        public PersonModel Person{ get; init; }
         public DateTime? DateOfBirth { get; init; }
         public string? CPF { get; init; }
 

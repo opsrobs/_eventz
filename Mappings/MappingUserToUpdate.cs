@@ -13,7 +13,7 @@ namespace eventz.Mappings
             CreateMap<UserToDtoUpdate, UserModel>()
                 .ForMember(dest => dest.CPF, opt => opt.MapFrom(src => src.CPF))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
-                .ForMember(dest => dest.PersonID, opt => opt.MapFrom(src => src.PersonID));
+                .ForMember(dest => dest.Person, opt => opt.MapFrom(src => src.Person));
 
         }
 

@@ -9,10 +9,10 @@ namespace eventz.Mappings
         public UserMapToDto()
         {
             CreateMap<UserModel, UserDto>()
-                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.PersonID.Username))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.PersonID.Email))
-                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.PersonID.FirstName))
-                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.PersonID.LastName))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Person.Username))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Person.Email))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Person.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Person.LastName))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
         }
     }

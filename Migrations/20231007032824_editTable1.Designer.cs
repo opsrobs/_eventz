@@ -11,8 +11,8 @@ using eventz.Data;
 namespace eventz.Migrations
 {
     [DbContext(typeof(EventzDbContext))]
-    [Migration("20231003200039_tablePerson")]
-    partial class tablePerson
+    [Migration("20231007032824_editTable1")]
+    partial class editTable1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -81,25 +81,50 @@ namespace eventz.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("PersonIDId")
+                    b.Property<Guid>("PersonId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonIDId");
+                    b.HasIndex("PersonId");
 
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("eventz.Models.UserToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Username")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Token");
+                });
+
             modelBuilder.Entity("eventz.Models.UserModel", b =>
                 {
-                    b.HasOne("eventz.Models.PersonModel", "PersonID")
+                    b.HasOne("eventz.Models.PersonModel", "Person")
                         .WithMany()
-                        .HasForeignKey("PersonIDId")
+                        .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PersonID");
+                    b.Navigation("Person");
                 });
 #pragma warning restore 612, 618
         }

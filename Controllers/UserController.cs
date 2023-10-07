@@ -40,15 +40,16 @@ namespace eventz.Controllers
                 return BadRequest("CPF já está cadastrado!");
             }
 
-            userRequest.PersonID.Id = Guid.NewGuid();
-            userRequest.PersonID.Password = await _securityService.EncryptPassword(userRequest.PersonID.Password);
-            userRequest.PersonID.Roles = Enums.RolesEnum.User;
+            userRequest.Person.Id = Guid.NewGuid();
+            userRequest.Person.Password = await _securityService.EncryptPassword(userRequest.Person.Password);
+            userRequest.Person.Roles = Enums.RolesEnum.User;
 
             UserModel userModel = _mapper.Map<UserModel>(userRequest);
+            userModel.PersonId = userRequest.Person.Id;
             userModel = await _repositorie.Create(userModel);
 
             var userDto = _mapper.Map<UserDto>(userModel);
-            var token = _authenticate.GenerateToken(userModel.PersonID.Id, userModel.PersonID.Email);
+            var token = _authenticate.GenerateToken(userModel.Person.Id, userModel.Person.Email);
 
             return Ok(new { User = userDto, Token = token });
         }
@@ -59,12 +60,12 @@ namespace eventz.Controllers
         //[Route("Login")]
         //public async Task<ActionResult<dynamic>> Authenticate([FromBody] UserModel user)
         //{
-        //    var userLoggin = await _authenticate.AuthenticateAsync(user.PersonID.Username, user.PersonID.Password);
+        //    var userLoggin = await _authenticate.AuthenticateAsync(user.Person.Username, user.Person.Password);
         //    if (userLoggin == false )
         //    {
         //        return NotFound("Usuario ou senha inválidos!");
         //    }
-        //    var token = _authenticate.GenerateToken(user.PersonID.Id, user.PersonID.Email);
+        //    var token = _authenticate.GenerateToken(user.Person.Id, user.Person.Email);
 
         //    return token;
         //}
@@ -72,7 +73,7 @@ namespace eventz.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Update([FromBody] UserToDtoUpdate userModel, Guid id)
         {
-            //userModel.PersonID.Id= id;  
+            //userModel.Person.Id= id;  
             if (await _repositorie.DataIsUnique(userModel.CPF))
             {
                 var isUpdated = _mapper.Map<UserModel>(userModel);
@@ -88,10 +89,11 @@ namespace eventz.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserModel>>> GetAllUsers()
+        public async Task<ActionResult<List<UserToDtoList>>> GetAllUsers()
         {
             List<UserModel> users = await _repositorie.GetAllUsers();
-            return Ok(users);
+            List<UserToDtoList> userDtos = _mapper.Map<List<UserToDtoList>>(users);
+            return Ok(userDtos);
         }
 
         [HttpGet("{id}")]

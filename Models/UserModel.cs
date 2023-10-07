@@ -7,22 +7,21 @@ namespace eventz.Models
         public Guid Id { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? CPF { get; set; }
-        public PersonModel PersonID { get; set; }
+        public Guid PersonId { get; set; }
+        public PersonModel Person { get; set; }
 
         public UserModel()
         {
             Id = Guid.NewGuid();
-            PersonID = new PersonModel();
-            PersonID.Roles = RolesEnum.User;
         }
 
-
-        public UserModel(Guid id, DateTime? dateOfBirth, string? cPF, PersonModel personID)
+        public UserModel(Guid id, DateTime? dateOfBirth, string? cPF, Guid personId, PersonModel person)
         {
             Id = id;
             DateOfBirth = dateOfBirth;
             CPF = cPF;
-            PersonID = personID;
+            PersonId = personId;
+            Person = person;
         }
     }
 }

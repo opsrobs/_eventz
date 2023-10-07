@@ -12,7 +12,7 @@ namespace eventz.Data.Map
             builder.HasKey(x => x.Id);
             builder.Property(x => x.CPF).HasMaxLength(20);
             builder.Property(x => x.DateOfBirth).HasMaxLength(20);
-            builder.HasOne(x => x.PersonID);
+            builder.HasOne(x => x.Person);
         }
     }
 }

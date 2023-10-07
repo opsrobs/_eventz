@@ -13,6 +13,7 @@ namespace eventz.Data
 
         public DbSet<UserModel> Users { get; set; }
         public DbSet<PersonModel> Person { get; set; }
+        public DbSet<UserToken> Token { get; set; }
         //public DbSet
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
