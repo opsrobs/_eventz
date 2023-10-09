@@ -75,10 +75,8 @@ namespace eventz.Repositories
 
             userId.CPF = user.CPF;
             userId.DateOfBirth = user.DateOfBirth;
-            userId.Person.FirstName = user.Person.FirstName;
-            userId.Person.LastName = user.Person.LastName;
+            userId.Person.Name = user.Person.Name;
             userId.Person.Email = user.Person.Email;
-            userId.Person.Username = user.Person.Username;
             userId.Person.UpdatedAt = DateTime.Now;
 
             _dbContext.Users.Update(userId);

@@ -9,7 +9,7 @@ namespace eventz.Data.Map
         public void Configure(EntityTypeBuilder<UserToken> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Username);
+            builder.Property(x => x.Email);
             builder.Property(x => x.Token).IsRequired();
             builder.Property(x => x.RefreshToken).IsRequired();
         }

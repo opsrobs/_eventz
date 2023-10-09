@@ -38,9 +38,8 @@ namespace eventz.Repositories
                 throw new InvalidOperationException("Person {id} not found");
             }
 
-            personID.FirstName = person.FirstName;
-            personID.LastName = person.LastName;
-            personID.Username = person.Username;
+            personID.Name = person.Name;
+            personID.Email = person.Email;
             personID.UpdatedAt = DateTime.Now;
 
             _dbContext.Person.Update(personID);
@@ -50,13 +49,13 @@ namespace eventz.Repositories
         }
         public async Task<PersonModel> GetDataFromLogin(PersonToDtoLogin loginDetails)
         {
-            return _dbContext.Person.FirstOrDefault(x => x.Username == loginDetails.Username);
+            return _dbContext.Person.FirstOrDefault(x => x.Email == loginDetails.Email);
         }
 
 
-        public async Task<bool> UsernameIsUnique(string username)
+        public async Task<bool> UsernameIsUnique(string email)
         {
-            if (!await _dbContext.Person.AnyAsync(x => x.Username == username))
+            if (!await _dbContext.Person.AnyAsync(x => x.Email == email))
             {
                 return true;
             }

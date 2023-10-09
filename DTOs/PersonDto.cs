@@ -1,4 +1,4 @@
 ﻿namespace eventz.DTOs
 {
-    public record PersonDto(string FirstName, string LastName, string Email, DateTime CreatedAt, string Username);
+    public record PersonDto(string Name, string Email, DateTime CreatedAt);
 }

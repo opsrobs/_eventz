@@ -1,4 +1,4 @@
 ﻿namespace eventz.DTOs
 {
-    public record PersonToDtoUpdate(string FirstName, string LastName, string Email, string Username);
+    public record PersonToDtoUpdate(string name, string Email);
 }

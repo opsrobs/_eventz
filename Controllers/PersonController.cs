@@ -28,7 +28,7 @@ namespace eventz.Controllers
         [HttpPost]
         public async Task<ActionResult<PersonDto>> Create([FromBody] PersonModel personModel)
         {
-            if (await _repositorie.UsernameIsUnique(personModel.Username))
+            if (await _repositorie.UsernameIsUnique(personModel.Email))
             {
                 personModel.Id = Guid.NewGuid();
                 string encrypted = await _securityService.EncryptPassword(personModel.Password);
@@ -43,7 +43,7 @@ namespace eventz.Controllers
             }
             else
             {
-                return BadRequest("Username não disponivel!");
+                return BadRequest("Email não disponivel!");
             }
         }
 
@@ -53,7 +53,7 @@ namespace eventz.Controllers
         [Route("Login")]
         public async Task<ActionResult<PersonDto>> Authenticate([FromBody] PersonToDtoLogin login)
         {
-            var userLoggin = await _authenticate.AuthenticateAsync(login.Username, login.Password);
+            var userLoggin = await _authenticate.AuthenticateAsync(login.Email, login.Password);
             if (userLoggin == false)
             {
                 return NotFound("Usuario ou senha inválidos!");

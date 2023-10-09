@@ -3,7 +3,7 @@
     public class UserToken
     {
         public Guid Id { get; set; }
-        public string Username { get; set; }
+        public string Email { get; set; }
         public string Token { get; set; }
         public string RefreshToken { get; set; }
 
@@ -12,10 +12,10 @@
             Id = Guid.NewGuid();
         }
 
-        public UserToken(Guid id, string username, string token, string refreshToken)
+        public UserToken(Guid id, string email, string token, string refreshToken)
         {
             Id = id;
-            Username = username;
+            Email = email;
             Token = token;
             RefreshToken = refreshToken;
         }

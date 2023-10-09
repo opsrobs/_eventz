@@ -35,36 +35,41 @@ namespace eventz.Controllers
 
         [HttpPost]
         [Route("Register")]
-        public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserRequestDto userRequest)
+        public async Task<ActionResult<ResponseUserDtoToken>> Create([FromBody] PersonToDtoCreate userRequest)
         {
             if (!await _repositorie.DataIsUnique(userRequest.CPF))
             {
                 return BadRequest("CPF já está cadastrado!");
             }
-            if(!await _personRepositorie.UsernameIsUnique(userRequest.Person.Username))
+            if(!await _personRepositorie.UsernameIsUnique(userRequest.Email))
             {
-                return BadRequest("Username não está disponivel!");
+                return BadRequest("Email não está disponivel!");
             }
 
-            userRequest.Person.Id = Guid.NewGuid();
-            userRequest.Person.Password = await _securityService.EncryptPassword(userRequest.Person.Password);
-            userRequest.Person.Roles = Enums.RolesEnum.User;
-
             UserModel userModel = _mapper.Map<UserModel>(userRequest);
-            userModel.PersonId = userRequest.Person.Id;
-            userModel = await _repositorie.Create(userModel);
+            userModel.Person.Password = await _securityService.EncryptPassword(userRequest.Password);
 
             var token = _authenticate.GenerateToken(userModel.Person.Id, userModel.Person.Email);
             UserToken userToken = new UserToken
             {
                 Token = token,
                 RefreshToken = Guid.NewGuid().ToString(),
-                Username = userRequest.Person.Username
+                Email = userRequest.Email
             };
+
+            userModel = await _repositorie.Create(userModel);
             var refreshToken = await _userTokenRepositorie.CreateToken(userToken);
 
             var userDto = _mapper.Map<UserDto>(userModel);
-            return Ok(new { User = userDto, Token = refreshToken });
+            ResponseUserDtoToken response = new ResponseUserDtoToken
+            {
+                Name = userDto.Name,
+                DateOfBirth = userDto.DateOfBirth,
+                Email = userDto.Email,
+                Token = refreshToken.Token,
+                RefreshToken = refreshToken.RefreshToken
+            };
+            return response;
         }
 
         [HttpPost]

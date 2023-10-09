@@ -21,9 +21,9 @@ namespace eventz.Accounts.Repositorie
             _userTokenRepositorie = userTokenRepositorie;
         }
 
-        public async Task<bool> AuthenticateAsync(string username, string password)
+        public async Task<bool> AuthenticateAsync(string email, string password)
         {
-            var user = await _dbContext.Person.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _dbContext.Person.FirstOrDefaultAsync(x => x.Email == email);
             if (user == null) return false;
 
             if (!BCrypt.Net.BCrypt.Verify(password, user.Password)) return false;
@@ -58,7 +58,7 @@ namespace eventz.Accounts.Repositorie
             {
                 Token = newJwtToken,
                 RefreshToken = newRefreshJwt,
-                Username = userToken.Username
+                Email = userToken.Email
             };
             return await _userTokenRepositorie.CreateToken(newToken);
         }
@@ -130,9 +130,9 @@ namespace eventz.Accounts.Repositorie
             return principal;
         }
 
-        public async Task<bool> UserExists(string username)
+        public async Task<bool> UserExists(string email)
         {
-            var user = await _dbContext.Person.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _dbContext.Person.FirstOrDefaultAsync(x => x.Email == email);
             if (user == null) return false;
 
             return true;

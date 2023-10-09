@@ -8,7 +8,7 @@ namespace eventz.Repositories.Interfaces
         Task<PersonModel> GetPersonById(Guid id);
         Task<PersonModel> Create(PersonModel person);
         Task<PersonModel> Update(PersonModel person, Guid id);
-        Task<bool> UsernameIsUnique(string username);
+        Task<bool> UsernameIsUnique(string email);
         Task<PersonModel> GetDataFromLogin(PersonToDtoLogin person);
     }
 }
