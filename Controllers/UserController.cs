@@ -37,7 +37,7 @@ namespace eventz.Controllers
         [Route("Register")]
         public async Task<ActionResult<ResponseUserDtoToken>> Create([FromBody] PersonToDtoCreate userRequest)
         {
-            var error = ""
+            var error = "";
             if (!await _repositorie.DataIsUnique(userRequest.CPF))
             {
                 error = "CPF já está cadastrado!";
@@ -45,7 +45,7 @@ namespace eventz.Controllers
             }
             if(!await _personRepositorie.UsernameIsUnique(userRequest.Email))
             {
-                var error = "Email não está disponivel!";
+                error = "Email não está disponivel!";
                 return BadRequest(new {error });
             }
 
