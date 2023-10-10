@@ -37,13 +37,16 @@ namespace eventz.Controllers
         [Route("Register")]
         public async Task<ActionResult<ResponseUserDtoToken>> Create([FromBody] PersonToDtoCreate userRequest)
         {
+            var error = ""
             if (!await _repositorie.DataIsUnique(userRequest.CPF))
             {
-                return BadRequest("CPF já está cadastrado!");
+                error = "CPF já está cadastrado!";
+                return BadRequest(new {error});
             }
             if(!await _personRepositorie.UsernameIsUnique(userRequest.Email))
             {
-                return BadRequest("Email não está disponivel!");
+                var error = "Email não está disponivel!";
+                return BadRequest(new {error });
             }
 
             UserModel userModel = _mapper.Map<UserModel>(userRequest);
@@ -82,7 +85,7 @@ namespace eventz.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Update([FromBody] UserToDtoUpdate userModel, Guid id)
         {
-            //userModel.Person.Id= id;  
+            var error = "";
             if (await _repositorie.DataIsUnique(userModel.CPF))
             {
                 var isUpdated = _mapper.Map<UserModel>(userModel);
@@ -93,7 +96,10 @@ namespace eventz.Controllers
 
             }
             else
-                return BadRequest("CPF já está cadastro");
+                return BadRequest(new { 
+                error,
+                    V = "CPF já está cadastro"
+                });
 
         }
 
