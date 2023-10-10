@@ -85,18 +85,24 @@ namespace eventz.Controllers
             return response;
         }
 
-        [HttpPost]
-        [Route("Refresh")]
-        public async Task<UserToken> RefreshToken(string refreshToken)
-        {
-            UserToken token = await _userTokenRepositorie.GetTokenByRefresh(refreshToken);
-            return await _authenticate.RefreshToken(token);
-        }
+        //[HttpPost]
+        //[Route("Refresh")]
+        //public async Task<UserToken> RefreshToken(string refreshToken)
+        //{
+        //    UserToken token = await _userTokenRepositorie.GetTokenByRefresh(refreshToken);
+        //    return await _authenticate.RefreshToken(token);
+        //}
+
         [HttpPut("{id}")]
         [Authorize(Roles ="User")]
         public async Task<ActionResult<UserDto>> Update([FromBody] UserToDtoUpdate userModel, Guid id)
         {
             var error = "";
+            if (!IsAuthorizedUser(id))
+            {
+                return Forbid(Messages.AcessoNegado);
+            }
+
             if (await _repositorie.DataIsUnique(userModel.CPF))
             {
                 var isUpdated = _mapper.Map<UserModel>(userModel);
