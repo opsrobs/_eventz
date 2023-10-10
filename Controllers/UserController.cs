@@ -60,15 +60,11 @@ namespace eventz.Controllers
                 Email = userRequest.Email
             };
 
-            userModel = await _repositorie.Create(userModel);
+            await _repositorie.Create(userModel);
             var refreshToken = await _userTokenRepositorie.CreateToken(userToken);
 
-            var userDto = _mapper.Map<UserDto>(userModel);
             ResponseUserDtoToken response = new ResponseUserDtoToken
             {
-                Name = userDto.Name,
-                DateOfBirth = userDto.DateOfBirth,
-                Email = userDto.Email,
                 Token = refreshToken.Token,
                 RefreshToken = refreshToken.RefreshToken
             };
