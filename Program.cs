@@ -6,6 +6,7 @@ using eventz.Repositories;
 using eventz.Repositories.Interfaces;
 using eventz.SecurityServices;
 using eventz.SecurityServices.Interfaces;
+using eventz.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -60,12 +61,24 @@ builder.Services.AddAutoMapper(typeof(UserMapToDto));
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new CustomDateTimeConverter());
+        }
+    );
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+//builder.Services.AddControllers()
+    //.AddJsonOptions(options =>
+    //{
+    //    options.JsonSerializerOptions.Converters.Add(new CustomDateTimeConverter());
+    //}
+    //);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

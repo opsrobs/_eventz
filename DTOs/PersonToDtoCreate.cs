@@ -1,8 +1,13 @@
-﻿namespace eventz.DTOs
+﻿using eventz.Utils;
+using System.ComponentModel.DataAnnotations;
+
+namespace eventz.DTOs
 {
     public record PersonToDtoCreate
     {
         public string Name { get; init; }
+        [Required]
+        [EmailAddress]
         public string Email { get; init; }
         public string Password { get; init; }
         public DateTime? DateOfBirth { get; init; }
