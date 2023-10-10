@@ -8,7 +8,7 @@ namespace eventz.Accounts
     {
         Task<bool> AuthenticateAsync(string email, string password);
         Task<bool> UserExists(string email);
-        public string GenerateToken(Guid id, string email);
+        public string GenerateToken(PersonModel person);
         public string GenerateToken(IEnumerable<Claim> claims);
 
         public ClaimsPrincipal GetTokenData(string token);

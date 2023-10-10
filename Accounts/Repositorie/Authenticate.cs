@@ -64,12 +64,13 @@ namespace eventz.Accounts.Repositorie
         }
 
 
-        public string GenerateToken(Guid id, string email)
+        public string GenerateToken(PersonModel person)
         {
             var claims = new[]
             {
-                new Claim("id",id.ToString()),
-                new Claim("email",email),
+                new Claim(ClaimTypes.NameIdentifier,person.Id.ToString()),
+                new Claim(ClaimTypes.Email,person.Email),
+                new Claim(ClaimTypes.Role,person.Roles.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

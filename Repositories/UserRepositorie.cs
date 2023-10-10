@@ -38,6 +38,17 @@ namespace eventz.Repositories
 
             return user;
         }
+        public async Task<UserModel> GetUserByPersonId(Guid id)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Person.Id == id);
+
+            if (user != null)
+            {
+                await _dbContext.Entry(user).Reference(u => u.Person).LoadAsync();
+            }
+
+            return user;
+        }
 
 
         public async Task<UserModel> Create(UserModel user)

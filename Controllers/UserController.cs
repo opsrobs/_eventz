@@ -4,7 +4,10 @@ using eventz.DTOs;
 using eventz.Models;
 using eventz.Repositories.Interfaces;
 using eventz.SecurityServices.Interfaces;
+using eventz.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace eventz.Controllers
 {
@@ -31,28 +34,40 @@ namespace eventz.Controllers
             _userTokenRepositorie = userTokenRepositorie;       
         }
 
-
+        private bool IsAuthorizedUser(Guid id)
+        {
+            var userIdFromToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return userIdFromToken == id.ToString();
+        }
 
         [HttpPost]
         [Route("Register")]
         public async Task<ActionResult<ResponseUserDtoToken>> Create([FromBody] PersonToDtoCreate userRequest)
         {
-            var error = "";
+            var error = string.Empty;
             if (!await _repositorie.DataIsUnique(userRequest.CPF))
             {
-                error = "CPF já está cadastrado!";
+                error = Messages.CpfError;
                 return BadRequest(new {error});
             }
             if(!await _personRepositorie.UsernameIsUnique(userRequest.Email))
             {
-                error = "Email não está disponivel!";
+                error = Messages.EmailError;
                 return BadRequest(new {error });
             }
 
             UserModel userModel = _mapper.Map<UserModel>(userRequest);
+            userModel.Person.Roles = Enums.RolesEnum.User;
             userModel.Person.Password = await _securityService.EncryptPassword(userRequest.Password);
 
-            var token = _authenticate.GenerateToken(userModel.Person.Id, userModel.Person.Email);
+            await _repositorie.Create(userModel);
+
+            var token = _authenticate.GenerateToken(new PersonModel
+            {
+                Id = userModel.PersonId,
+                Email = userModel.Person.Email,
+                Roles = userModel.Person.Roles
+            });
             UserToken userToken = new UserToken
             {
                 Token = token,
@@ -60,7 +75,6 @@ namespace eventz.Controllers
                 Email = userRequest.Email
             };
 
-            await _repositorie.Create(userModel);
             var refreshToken = await _userTokenRepositorie.CreateToken(userToken);
 
             ResponseUserDtoToken response = new ResponseUserDtoToken
@@ -79,6 +93,7 @@ namespace eventz.Controllers
             return await _authenticate.RefreshToken(token);
         }
         [HttpPut("{id}")]
+        [Authorize(Roles ="User")]
         public async Task<ActionResult<UserDto>> Update([FromBody] UserToDtoUpdate userModel, Guid id)
         {
             var error = "";
@@ -94,12 +109,13 @@ namespace eventz.Controllers
             else
                 return BadRequest(new { 
                 error,
-                    V = "CPF já está cadastro"
+                    V = Messages.CpfError
                 });
 
         }
 
         [HttpGet]
+        //[Authorize(Roles ="Admin")]
         public async Task<ActionResult<List<UserToDtoList>>> GetAllUsers()
         {
             List<UserModel> users = await _repositorie.GetAllUsers();
@@ -108,14 +124,21 @@ namespace eventz.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<UserModel>>> GetUserById(Guid id)
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<UserDto>> GetUserById(Guid id)
         {
-            UserModel user = await _repositorie.GetUserById(id);
-            var userDto = _mapper.Map<UserDto>(user);
-            return Ok(userDto);
+            if (!IsAuthorizedUser(id))
+            {
+                return Forbid(Messages.AcessoNegado);
+            }
+
+            var user = await _repositorie.GetUserByPersonId(id);
+            return Ok(_mapper.Map<UserDto>(user));
         }
 
+
         [HttpDelete("{id}")]
+        [Authorize(Roles ="User")]
         public async Task<ActionResult<List<UserModel>>> Delete(Guid id)
         {
             bool deleted = await _repositorie.Delete(id);
