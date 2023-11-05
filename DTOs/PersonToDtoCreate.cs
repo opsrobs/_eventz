@@ -10,18 +10,15 @@ namespace eventz.DTOs
         [EmailAddress]
         public string Email { get; init; }
         public string Password { get; init; }
-        public DateTime? DateOfBirth { get; init; }
-        public string? CPF { get; init; }
+        
 
         public PersonToDtoCreate() { }
 
-        public PersonToDtoCreate(string name, string email,  string password, DateTime? dateOfBirth, string? cPF)
+        public PersonToDtoCreate(string name, string email,  string password)
         {
             Name = name;
             Email = email;
             Password = password;
-            DateOfBirth = dateOfBirth;
-            CPF = cPF;
         }
     }
 }

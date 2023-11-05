@@ -8,6 +8,7 @@ using eventz.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace eventz.Controllers
 {
@@ -44,21 +45,26 @@ namespace eventz.Controllers
         [Route("Register")]
         public async Task<ActionResult<ResponseUserDtoToken>> Create([FromBody] PersonToDtoCreate userRequest)
         {
-            var error = string.Empty;
-            if (!await _repositorie.DataIsUnique(userRequest.CPF))
+            if (!await _personRepositorie.UsernameIsUnique(userRequest.Email))
             {
-                error = Messages.CpfError;
-                return BadRequest(new {error});
-            }
-            if(!await _personRepositorie.UsernameIsUnique(userRequest.Email))
-            {
-                error = Messages.EmailError;
-                return BadRequest(new {error });
+                return BadRequest(new { error = Messages.EmailError });
             }
 
             UserModel userModel = _mapper.Map<UserModel>(userRequest);
             userModel.Person.Roles = Enums.RolesEnum.User;
-            userModel.Person.Password = await _securityService.EncryptPassword(userRequest.Password);
+            if (string.IsNullOrEmpty(userModel.Person.Password))
+            {
+                return BadRequest(new { error = Messages.EmprtyPassword });
+            }
+
+            try
+            {
+                userModel.Person.Password = await _securityService.EncryptPassword(userRequest.Password);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Error encrypting password." });
+            }
 
             await _repositorie.Create(userModel);
 
@@ -68,22 +74,34 @@ namespace eventz.Controllers
                 Email = userModel.Person.Email,
                 Roles = userModel.Person.Roles
             });
+
+            try
+            {
+                UserToken userToken = await CreateUserTokenAsync(userRequest.Email, token);
+                return Ok(new ResponseUserDtoToken
+                {
+                    Token = userToken.Token,
+                    RefreshToken = userToken.RefreshToken
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Error creating user token." });
+            }
+        }
+
+        private async Task<UserToken> CreateUserTokenAsync(string email, string token)
+        {
             UserToken userToken = new UserToken
             {
                 Token = token,
                 RefreshToken = Guid.NewGuid().ToString(),
-                Email = userRequest.Email
+                Email = email
             };
 
-            var refreshToken = await _userTokenRepositorie.CreateToken(userToken);
-
-            ResponseUserDtoToken response = new ResponseUserDtoToken
-            {
-                Token = refreshToken.Token,
-                RefreshToken = refreshToken.RefreshToken
-            };
-            return response;
+            return await _userTokenRepositorie.CreateToken(userToken);
         }
+
 
         [HttpPost]
         [Route("Refresh")]

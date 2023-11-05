@@ -7,6 +7,7 @@
         public const string CpfError = "CPF já está cadastro";
         public const string EmailError = "Email não disponivel!";
         public const string PasswordFailure = "Usuario ou senha Inválidos!";
+        public const string EmprtyPassword= "Password is null!";
 
     }
 }
