@@ -51,6 +51,10 @@ namespace eventz.Controllers
             }
 
             UserModel userModel = _mapper.Map<UserModel>(userRequest);
+            if (userRequest.Roles == Enums.RolesEnum.Employee)
+            {
+                userModel.Person.Roles = Enums.RolesEnum.Employee;
+            }
             userModel.Person.Roles = Enums.RolesEnum.User;
             if (string.IsNullOrEmpty(userModel.Person.Password))
             {
