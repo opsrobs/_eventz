@@ -1,4 +1,5 @@
-﻿using eventz.Utils;
+﻿using eventz.Enums;
+using eventz.Utils;
 using System.ComponentModel.DataAnnotations;
 
 namespace eventz.DTOs
@@ -10,18 +11,17 @@ namespace eventz.DTOs
         [EmailAddress]
         public string Email { get; init; }
         public string Password { get; init; }
-        public DateTime? DateOfBirth { get; init; }
-        public string? CPF { get; init; }
+        public RolesEnum Roles { get; init; }
+
 
         public PersonToDtoCreate() { }
 
-        public PersonToDtoCreate(string name, string email,  string password, DateTime? dateOfBirth, string? cPF)
+        public PersonToDtoCreate(string name, string email,  string password, RolesEnum roles)
         {
             Name = name;
             Email = email;
             Password = password;
-            DateOfBirth = dateOfBirth;
-            CPF = cPF;
+            Roles = roles;
         }
     }
 }

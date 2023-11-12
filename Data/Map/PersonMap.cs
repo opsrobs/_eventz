@@ -13,6 +13,7 @@ namespace eventz.Data.Map
             builder.Property(x => x.Email).HasMaxLength(65);
             builder.Property(x => x.CreatedAt).IsRequired().ValueGeneratedOnAdd();
             builder.Property(x => x.UpdatedAt).ValueGeneratedOnUpdate();
+            builder.Property(x => x.Password).IsRequired();
             builder.Property(x => x.Roles);
         }
     }
