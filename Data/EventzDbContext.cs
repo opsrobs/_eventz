@@ -14,6 +14,7 @@ namespace eventz.Data
         public DbSet<UserModel> Users { get; set; }
         public DbSet<PersonModel> Person { get; set; }
         public DbSet<UserToken> Token { get; set; }
+        public DbSet<Event> Event { get; set; }
         //public DbSet
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -21,6 +22,7 @@ namespace eventz.Data
             modelBuilder.ApplyConfiguration(new UserMap());
             modelBuilder.ApplyConfiguration(new PersonMap());
             modelBuilder.ApplyConfiguration(new UserTokenMap());
+            modelBuilder.ApplyConfiguration(new EventMap());
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -11,8 +11,8 @@ using eventz.Data;
 namespace eventz.Migrations
 {
     [DbContext(typeof(EventzDbContext))]
-    [Migration("20231009185108_editschemas")]
-    partial class editschemas
+    [Migration("20231119192702_NomeDaMigracao")]
+    partial class NomeDaMigracao
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
