@@ -9,6 +9,6 @@
         public string LocalizationDescription { get; set; }
         public string TimeDescription { get; set; }
         public string EventDescription { get; set; }
-        public Localization Localization { get; set; }
+        //public Localization Localization { get; set; }
     }
 }

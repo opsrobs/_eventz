@@ -15,7 +15,7 @@ namespace eventz.Data.Map
             builder.Property(e => e.LocalizationDescription).IsRequired();
             builder.Property(e => e.TimeDescription).IsRequired();
             builder.Property(e => e.EventDescription).IsRequired();
-            builder.Property(e => e.Localization).IsRequired();
+            //builder.Property(e => e.Localization).IsRequired();
         }
     }
 }

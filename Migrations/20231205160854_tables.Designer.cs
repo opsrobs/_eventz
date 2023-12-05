@@ -11,8 +11,8 @@ using eventz.Data;
 namespace eventz.Migrations
 {
     [DbContext(typeof(EventzDbContext))]
-    [Migration("20231119192702_NomeDaMigracao")]
-    partial class NomeDaMigracao
+    [Migration("20231205160854_tables")]
+    partial class tables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,63 @@ namespace eventz.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("eventz.Models.Event", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("EventDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LocalizationDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TimeDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Event");
+                });
+
+            modelBuilder.Entity("eventz.Models.Localization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double");
+
+                    b.Property<Guid?>("UserID")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Localization");
+                });
 
             modelBuilder.Entity("eventz.Models.PersonModel", b =>
                 {
@@ -102,6 +159,15 @@ namespace eventz.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Token");
+                });
+
+            modelBuilder.Entity("eventz.Models.Localization", b =>
+                {
+                    b.HasOne("eventz.Models.UserModel", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eventz.Models.UserModel", b =>

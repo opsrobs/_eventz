@@ -32,6 +32,8 @@ builder.Services.AddScoped<IPersonRepositorie, PersonRepositorie>();
 builder.Services.AddScoped<IAuthenticate, Authenticate>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
 builder.Services.AddScoped<IUserTokenRepositorie, UserTokenRepositorie>();
+builder.Services.AddScoped<ILocalizationRepository, LocalizationRepository>();
+//builder.Services.AddScoped<IUserTokenRepositorie, UserTokenRepositorie>();
 
 builder.Services.AddAuthentication(options =>
 {

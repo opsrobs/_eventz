@@ -8,6 +8,8 @@
         public const string EmailError = "Email não disponivel!";
         public const string PasswordFailure = "Usuario ou senha Inválidos!";
         public const string EmprtyPassword= "Password is null!";
+        public const string EmptyLocalization= "Without localization!";
+        public const string InvalidLocalization = "Localization is invalid!";
 
     }
 }

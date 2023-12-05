@@ -4,7 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>80b10460-b7ea-46c5-a9eb-09f1f2273a72</UserSecretsId>
+    <UserSecretsId>502a0eb4-090a-42b7-9226-dea567539a55</UserSecretsId>
+    <!--<UserSecretsId>80b10460-b7ea-46c5-a9eb-09f1f2273a72</UserSecretsId>-->
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,10 @@
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

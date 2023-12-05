@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eventz.Data;
 
@@ -10,9 +11,10 @@ using eventz.Data;
 namespace eventz.Migrations
 {
     [DbContext(typeof(EventzDbContext))]
-    partial class EventzDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231204184124_newTables")]
+    partial class newTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,17 +62,13 @@ namespace eventz.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("DeviceId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<double>("Latitude")
                         .HasColumnType("double");
 
                     b.Property<double>("Longitude")
                         .HasColumnType("double");
 
-                    b.Property<Guid?>("UserID")
+                    b.Property<Guid>("UserID")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -167,7 +165,9 @@ namespace eventz.Migrations
                 {
                     b.HasOne("eventz.Models.UserModel", "User")
                         .WithMany()
-                        .HasForeignKey("UserID");
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
