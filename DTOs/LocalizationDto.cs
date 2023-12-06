@@ -2,7 +2,7 @@
 
 namespace eventz.DTOs
 {
-    public record LocalizationDto(Guid UserID, double Longitude, double Latitude)
+    public record LocalizationDto(double Longitude, double Latitude)
     {
         
     }

@@ -23,7 +23,9 @@ namespace eventz.Repositories
 
         public async Task<List<Event>> GetAll()
         {
-            return await _dbContext.Event.ToListAsync();
+            return await _dbContext.Event
+                .Where(x => x.ThisLocalization.Id == x.ThisLocalizationId)
+                .Include(u => u.ThisLocalization).ToListAsync();
                 //.Include(u => u.Person).ToListAsync();
         }
 

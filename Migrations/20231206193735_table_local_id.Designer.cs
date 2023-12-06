@@ -11,8 +11,8 @@ using eventz.Data;
 namespace eventz.Migrations
 {
     [DbContext(typeof(EventzDbContext))]
-    [Migration("20231205160854_tables")]
-    partial class tables
+    [Migration("20231206193735_table_local_id")]
+    partial class table_local_id
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,27 @@ namespace eventz.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("eventz.Models.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<Guid?>("HomeId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HomeId");
+
+                    b.ToTable("Category");
+                });
 
             modelBuilder.Entity("eventz.Models.Event", b =>
                 {
@@ -43,9 +64,14 @@ namespace eventz.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("TimeDescription")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<Guid?>("SectionId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ThisLocalizationId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("TimeDescription")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -53,7 +79,27 @@ namespace eventz.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("SectionId");
+
+                    b.HasIndex("ThisLocalizationId");
+
                     b.ToTable("Event");
+                });
+
+            modelBuilder.Entity("eventz.Models.Home", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Home");
                 });
 
             modelBuilder.Entity("eventz.Models.Localization", b =>
@@ -68,12 +114,7 @@ namespace eventz.Migrations
                     b.Property<double>("Longitude")
                         .HasColumnType("double");
 
-                    b.Property<Guid?>("UserID")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("Localization");
                 });
@@ -112,6 +153,27 @@ namespace eventz.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Person");
+                });
+
+            modelBuilder.Entity("eventz.Models.Section", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("HomeId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("SectionName")
+                        .IsRequired()
+                        .HasMaxLength(65)
+                        .HasColumnType("varchar(65)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HomeId");
+
+                    b.ToTable("Section");
                 });
 
             modelBuilder.Entity("eventz.Models.UserModel", b =>
@@ -161,13 +223,42 @@ namespace eventz.Migrations
                     b.ToTable("Token");
                 });
 
-            modelBuilder.Entity("eventz.Models.Localization", b =>
+            modelBuilder.Entity("eventz.Models.Category", b =>
+                {
+                    b.HasOne("eventz.Models.Home", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("HomeId");
+                });
+
+            modelBuilder.Entity("eventz.Models.Event", b =>
+                {
+                    b.HasOne("eventz.Models.Section", null)
+                        .WithMany("Events")
+                        .HasForeignKey("SectionId");
+
+                    b.HasOne("eventz.Models.Localization", "ThisLocalization")
+                        .WithMany()
+                        .HasForeignKey("ThisLocalizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ThisLocalization");
+                });
+
+            modelBuilder.Entity("eventz.Models.Home", b =>
                 {
                     b.HasOne("eventz.Models.UserModel", "User")
                         .WithMany()
-                        .HasForeignKey("UserID");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eventz.Models.Section", b =>
+                {
+                    b.HasOne("eventz.Models.Home", null)
+                        .WithMany("Sections")
+                        .HasForeignKey("HomeId");
                 });
 
             modelBuilder.Entity("eventz.Models.UserModel", b =>
@@ -179,6 +270,18 @@ namespace eventz.Migrations
                         .IsRequired();
 
                     b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("eventz.Models.Home", b =>
+                {
+                    b.Navigation("Categories");
+
+                    b.Navigation("Sections");
+                });
+
+            modelBuilder.Entity("eventz.Models.Section", b =>
+                {
+                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }

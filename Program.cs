@@ -33,7 +33,8 @@ builder.Services.AddScoped<IAuthenticate, Authenticate>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
 builder.Services.AddScoped<IUserTokenRepositorie, UserTokenRepositorie>();
 builder.Services.AddScoped<ILocalizationRepository, LocalizationRepository>();
-//builder.Services.AddScoped<IUserTokenRepositorie, UserTokenRepositorie>();
+builder.Services.AddScoped<IHomeRepository, HomeRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -59,7 +60,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAutoMapper(typeof(UserMapToDto));
+builder.Services.AddAutoMapper(typeof(MappingHome));
 
 // Add services to the container.
 
