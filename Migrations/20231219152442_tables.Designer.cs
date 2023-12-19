@@ -11,8 +11,8 @@ using eventz.Data;
 namespace eventz.Migrations
 {
     [DbContext(typeof(EventzDbContext))]
-    [Migration("20231206193735_table_local_id")]
-    partial class table_local_id
+    [Migration("20231219152442_tables")]
+    partial class tables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
