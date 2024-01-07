@@ -12,22 +12,43 @@ namespace eventz.Controllers
     {
         private readonly IEventRepository _eventRepository;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _environment;
 
-        public EventController(IMapper mapper, IEventRepository eventRepository)
+
+        public EventController(IMapper mapper, IEventRepository eventRepository, IWebHostEnvironment environment)
         {
             _mapper = mapper;
             _eventRepository = eventRepository;
+            _environment = environment;
         }
 
         [HttpPost]
         [Route("Events")]
-        public async Task<ActionResult<Event>> Create([FromBody] EventDtoRequest event_req)
+        public async Task<ActionResult<Event>> Create([FromForm] EventDtoRequest event_req)
         {
-            Event @event = new Event();
-            @event = _mapper.Map<Event>(event_req);
+            var uniqueFileName = string.Empty;
 
             try
             {
+                if (event_req.ImageFile != null)
+                {
+                    var uploadPath = Path.Combine(_environment.WebRootPath ?? "", "uploads");
+                    Directory.CreateDirectory(uploadPath);
+
+                    uniqueFileName = $"{Guid.NewGuid().ToString()}_{event_req.ImageFile.FileName}";
+                    var filePath = Path.Combine(uploadPath, uniqueFileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        event_req.ImageFile.CopyTo(stream);
+                    }
+
+
+                }
+                // Mapear o DTO para o objeto Event
+                Event @event = _mapper.Map<Event>(event_req);
+                @event.ImageUrl = $"/uploads/{uniqueFileName}";
+
 
                 await _eventRepository.Create(@event);
                 return Ok(event_req);
@@ -36,8 +57,10 @@ namespace eventz.Controllers
             {
                 // Considere logar o erro ex para fins de depuração.
                 return StatusCode(500, new { error = "Internal Server Error." });
+
             }
         }
+
 
         [HttpGet]
         public async Task<ActionResult<List<Event>>> GetAllEvents()

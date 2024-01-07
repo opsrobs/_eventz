@@ -2,6 +2,7 @@
 using eventz.Models;
 using eventz.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 
 namespace eventz.Repositories
 {
@@ -29,11 +30,12 @@ namespace eventz.Repositories
                 //.Include(u => u.Person).ToListAsync();
         }
 
-        public async Task<Event>Create(Event newEvent)
+        public async Task<Event> Create(Event newEvent)
         {
             await _dbContext.Event.AddAsync(newEvent);
             await _dbContext.SaveChangesAsync();
-            return newEvent;        }
+            return newEvent;
+        }
 
         public async Task<Event>Update(Event updatedEvent, Guid id)
         {
