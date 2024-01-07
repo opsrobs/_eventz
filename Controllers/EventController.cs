@@ -75,9 +75,11 @@ namespace eventz.Controllers
         [Route("images/{imageName}")]
         public IActionResult GetImage(string imageName)
         {
+            string webRoot = Path.Combine(_environment.WebRootPath, "out");
+            Console.WriteLine(webRoot);
             if (_environment.WebRootPath == null)
             {
-                Console.WriteLine(_environment.ContentRootPath + $"{_environment.WebRootPath}/out");
+                Console.WriteLine(_environment.ContentRootPath + $"{_environment.WebRootPath}out");
                 return BadRequest("WebRootPath não configurado corretamente.");
             }
 
