@@ -69,6 +69,27 @@ namespace eventz.Controllers
             //List<UserToDtoList> userDtos = _mapper.Map<List<UserToDtoList>>(users);
             return Ok(events);
         }
+        [HttpGet]
+        [Route("images/{imageName}")]
+        public IActionResult GetImage(string imageName)
+        {
+            if (_environment.WebRootPath == null)
+            {
+                return BadRequest("WebRootPath não configurado corretamente.");
+            }
+
+            var imagePath = Path.Combine(_environment.WebRootPath, "uploads", imageName);
+
+            if (System.IO.File.Exists(imagePath))
+            {
+                var imageBytes = System.IO.File.ReadAllBytes(imagePath);
+                return File(imageBytes, "image/jpeg");  // ou "image/png", dependendo do formato da imagem
+            }
+
+            return NotFound(); // Ou BadRequest(), dependendo da sua lógica de tratamento de erro
+        }
+
+
 
     }
 }
