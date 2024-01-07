@@ -54,7 +54,7 @@ namespace eventz.Controllers
 
                 await _eventRepository.Create(@event);
                 @event.ImageUrl = uploadPath;
-                return Ok(@event);
+                return Ok(event_req);
             }
             catch (Exception ex)
             {
