@@ -2,6 +2,7 @@
 using eventz.DTOs;
 using eventz.Models;
 using eventz.Repositories.Interfaces;
+using eventz.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eventz.Controllers
@@ -13,13 +14,14 @@ namespace eventz.Controllers
         private readonly IEventRepository _eventRepository;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
-
+        private readonly string baseApiUrl;
 
         public EventController(IMapper mapper, IEventRepository eventRepository, IWebHostEnvironment environment)
         {
             _mapper = mapper;
             _eventRepository = eventRepository;
             _environment = environment;
+            baseApiUrl = Messages.UrlImage;
         }
 
         [HttpPost]
@@ -47,7 +49,7 @@ namespace eventz.Controllers
                 }
                 // Mapear o DTO para o objeto Event
                 Event @event = _mapper.Map<Event>(event_req);
-                @event.ImageUrl = $"/uploads/{uniqueFileName}";
+                @event.ImageUrl = $"{baseApiUrl}/{uniqueFileName}";
 
 
                 await _eventRepository.Create(@event);

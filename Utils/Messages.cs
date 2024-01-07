@@ -10,6 +10,7 @@
         public const string EmprtyPassword= "Password is null!";
         public const string EmptyLocalization= "Without localization!";
         public const string InvalidLocalization = "Localization is invalid!";
+        public const string UrlImage = "https://eventz-production-c270.up.railway.app/api/Event/images";
 
     }
 }
