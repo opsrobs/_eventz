@@ -29,12 +29,12 @@ namespace eventz.Controllers
         public async Task<ActionResult<Event>> Create([FromForm] EventDtoRequest event_req)
         {
             var uniqueFileName = string.Empty;
-
+            var uploadPath = string.Empty;
             try
             {
                 if (event_req.ImageFile != null)
                 {
-                    var uploadPath = Path.Combine(_environment.WebRootPath ?? "", "uploads");
+                    uploadPath = Path.Combine(_environment.WebRootPath ?? "", "uploads");
                     Directory.CreateDirectory(uploadPath);
 
                     uniqueFileName = $"{Guid.NewGuid().ToString()}_{event_req.ImageFile.FileName}";
@@ -53,7 +53,8 @@ namespace eventz.Controllers
 
 
                 await _eventRepository.Create(@event);
-                return Ok(event_req);
+                @event.ImageUrl = uploadPath;
+                return Ok(@event);
             }
             catch (Exception ex)
             {
