@@ -13,7 +13,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+//    ContentRootPath = "/app/out"
+    WebRootPath = WebApplication.CreateBuilder(args)
+        .Configuration.GetValue<string>("webroot") ?? "wwwroot"
+}); ;
+
 
 
 
