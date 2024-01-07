@@ -75,8 +75,9 @@ namespace eventz.Controllers
         [Route("images/{imageName}")]
         public IActionResult GetImage(string imageName)
         {
-            if (_environment.WebRootPath == null)
+            if (_environment.WebRootPath != null)
             {
+                Console.WriteLine(_environment.ContentRootPath);
                 return BadRequest("WebRootPath não configurado corretamente.");
             }
 

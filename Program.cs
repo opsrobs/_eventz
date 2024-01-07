@@ -16,6 +16,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 
+
 var connectionStringMysql = builder.Configuration.GetConnectionString("myConnectionString");
 
 builder.Services.AddDbContext<EventzDbContext>(options => options.UseMySql(
