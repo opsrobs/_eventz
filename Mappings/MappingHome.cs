@@ -45,6 +45,12 @@ namespace eventz.Mappings
             CreateMap<PersonToDtoUpdate, PersonModel>();
 
             CreateMap<UserModel, UserToDtoList>();
+            CreateMap<EventDtoRequest, Event>();
+
+            CreateMap<Event, EventDtoResponse>()
+                .ForMember(dest => dest.ThisLocalization, opt => opt.MapFrom(src => src.ThisLocalization));
+
+
 
             CreateMap<EventDtoRequest, Event>()
                 .ForMember(dest => dest.ThisLocalization, opt => opt.MapFrom(src => src.ThisLocalization));
