@@ -13,9 +13,10 @@ namespace eventz.Data.Map
             builder.Property(e => e.Type).IsRequired();
             builder.Property(e => e.ImageUrl).IsRequired();
             builder.Property(e => e.LocalizationDescription).IsRequired();
-            builder.Property(e => e.TimeDescription).IsRequired();
+            builder.Property(e => e.StartDate).IsRequired();
+            builder.Property(e => e.EndDate).IsRequired();
             builder.Property(e => e.EventDescription).IsRequired();
-            builder.HasOne(e => e.ThisLocalization);
+            builder.HasOne(e => e.localization);
         }
     }
 }

@@ -13,12 +13,13 @@ namespace eventz.Models
         public IFormFile ImageFile { get; set; }
 
         public string LocalizationDescription { get; set; }
-        public DateTime TimeDescription { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public string? EventDescription { get; set; }
-        public Guid ThisLocalizationId { get; set; }
-        public Localization ThisLocalization { get; set; }
+        public Guid localizationId { get; set; }
+        public Localization localization { get; set; }
 
-        public Event(Guid id, string? name, string? type, string imageUrl, IFormFile imageFile, string localizationDescription, DateTime timeDescription, string? eventDescription, Guid thisLocalizationId, Localization thisLocalization)
+        public Event(Guid id, string? name, string? type, string imageUrl, IFormFile imageFile, string localizationDescription, DateTime startDate, DateTime endDate, string? eventDescription, Guid localizationId, Localization localization)
         {
             Id = id;
             Name = name;
@@ -26,27 +27,15 @@ namespace eventz.Models
             ImageUrl = imageUrl;
             ImageFile = imageFile;
             LocalizationDescription = localizationDescription;
-            TimeDescription = timeDescription;
+            StartDate = startDate;
+            EndDate = endDate;
             EventDescription = eventDescription;
-            ThisLocalizationId = thisLocalizationId;
-            ThisLocalization = thisLocalization;
-        }
-
-        public Event(Guid id, string? name, string? type, string imageUrl, string localizationDescription, DateTime timeDescription, string? eventDescription, Localization localization)
-        {
-            Id = id;
-            Name = name;
-            Type = type;
-            ImageUrl = imageUrl;
-            LocalizationDescription = localizationDescription;
-            TimeDescription = timeDescription;
-            EventDescription = eventDescription;
-            ThisLocalization = localization;
+            this.localizationId = localizationId;
+            this.localization = localization;
         }
 
         public Event()
-        { 
+        {
         }
-
     }
 }

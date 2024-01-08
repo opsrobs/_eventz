@@ -48,7 +48,7 @@ namespace eventz.Mappings
             CreateMap<EventDtoRequest, Event>();
 
             CreateMap<EventDtoRequest, Event>()
-                .ForMember(dest => dest.ThisLocalization, opt => opt.MapFrom(src => src.ThisLocalization));
+                .ForMember(dest => dest.localization, opt => opt.MapFrom(src => src.localization));
 
             CreateMap<LocalizationDto, Localization>();
 

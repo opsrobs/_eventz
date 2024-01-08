@@ -23,7 +23,7 @@ namespace eventz.Controllers
         }
 
         [HttpPost]
-        [Route("Events")]
+        [Route("create")]
         public async Task<ActionResult<Event>> Create([FromForm] EventDtoRequest event_req)
         {
             var uniqueFileName = string.Empty;
@@ -32,6 +32,15 @@ namespace eventz.Controllers
             {
                 if (event_req.ImageFile != null)
                 {
+                    // Verificar a extensão do arquivo para garantir que seja uma imagem
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var extension = Path.GetExtension(event_req.ImageFile.FileName).ToLower();
+
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        return BadRequest(new { error = "O arquivo enviado não é uma imagem válida." });
+                    }
+
                     var uploadPath = Path.Combine(_environment.WebRootPath ?? "", "uploads");
                     Directory.CreateDirectory(uploadPath);
 
@@ -42,22 +51,18 @@ namespace eventz.Controllers
                     {
                         event_req.ImageFile.CopyTo(stream);
                     }
-
-
                 }
-                // Mapear o DTO para o objeto Event
+
                 Event @event = _mapper.Map<Event>(event_req);
                 @event.ImageUrl = $"/uploads/{uniqueFileName}";
-
 
                 await _eventRepository.Create(@event);
                 return Ok(event_req);
             }
             catch (Exception ex)
             {
-                // Considere logar o erro ex para fins de depuração.
+                await Console.Out.WriteLineAsync(ex.Message);
                 return StatusCode(500, new { error = "Internal Server Error." });
-
             }
         }
 
@@ -69,6 +74,19 @@ namespace eventz.Controllers
             //List<UserToDtoList> userDtos = _mapper.Map<List<UserToDtoList>>(users);
             return Ok(events);
         }
+
+        [HttpPost]
+        [Route("getAll")]
+        public async Task<ActionResult<List<Event>>> GetAll([FromBody] LocalizationDto localization)
+        {
+            List<EventWithLocalization> eventsWithLocalization = await _eventRepository.GetEventByLocalization(localization);
+
+            // Agora você precisa mapear apenas a propriedade Event da nova classe para obter uma lista de Event
+            List<Event> events = eventsWithLocalization.Select(e => e.Event).ToList();
+
+            return Ok(events);
+        }
+
 
     }
 }

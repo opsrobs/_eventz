@@ -1,10 +1,12 @@
-﻿using eventz.Models;
+﻿using eventz.DTOs;
+using eventz.Models;
 
 namespace eventz.Repositories.Interfaces
 {
     public interface IEventRepository
     {
         Task<Event> GetEventById(Guid eventId);
+        Task<List<EventWithLocalization>> GetEventByLocalization(LocalizationDto localization);
         Task<Event> Create(Event newEvent);
         Task<Event> Update(Event updatedEvent, Guid id);
         Task<List<Event>> GetAll();
